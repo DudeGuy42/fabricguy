@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="GuyActorCorePkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <ServiceTypes>
+    <StatefulServiceType ServiceTypeName="GuyActorCoreActorServiceType" HasPersistedState="true">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="a8769609-0861-4102-a0d1-4a615484009a|Persisted">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="GuyActorCoreActorService" />
+            <ReplicatorEndpoint Name="GuyActorCoreActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="GuyActorCoreActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="GuyActorCoreActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="GuyActorCoreActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2_1 Name="GuyActorCoreActorServiceEndpointV2_1" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+  </ServiceTypes>
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <ExeHost>
+        <Program>GuyActorCore.exe</Program>
+      </ExeHost>
+    </EntryPoint>
+  </CodePackage>
+  <ConfigPackage Name="Config" Version="1.0.0" />
+  <Resources>
+    <Endpoints>
+      <Endpoint Name="GuyActorCoreActorServiceEndpointV2_1" />
+      <Endpoint Name="GuyActorCoreActorServiceReplicatorEndpoint" />
+    </Endpoints>
+  </Resources>
+  <!-- The content will be generated during build -->
+</ServiceManifest>
