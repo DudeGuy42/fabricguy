@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using GuyRemoteServices;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +13,16 @@ namespace GuyStatelessWebCore.Hubs
 {
     public class GuyHub: Hub
     {
+        IGuyStatefulServiceCoreInterface _guyService;
+        public GuyHub()
+        { 
+            _guyService = ServiceProxy.Create<IGuyStatefulServiceCoreInterface>(new Uri("fabric:/GuyFabric/GuyStatefulServiceCore"), new ServicePartitionKey(1), listenerName: "ServiceEndpointV2");
+        }
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
             await Clients.All.SendAsync("connected", $"new connection: {this.Context.ConnectionId}");
+         //   await _guyService.CreateGuy();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -22,13 +31,24 @@ namespace GuyStatelessWebCore.Hubs
             await Clients.All.SendAsync("disconnected", $"{this.Context.ConnectionId} disconnected.");
         }
 
-        public void HubInfo()
+        public async Task HubInfo()
         {
-            Clients.Caller.SendAsync("receiveInfo", $"ConnectionId: {this.Context.ConnectionId}");
+            try
+            {
+                var guys = await _guyService.GetGuys();
+                await Clients.Caller.SendAsync("receiveInfo", $"ConnectionId: {this.Context.ConnectionId}\nGuysData: {guys}");
+            }
+            catch(Exception ex)
+            {
+                await Clients.Caller.SendAsync("receiveInfo", $"Server Exception: {ex}");
+
+                Console.WriteLine($"{ex}");
+            }
         }
 
         public async IAsyncEnumerable<int> Counter()
         {
+            await HubInfo();
             int i = 0;
             while(true)
             { 

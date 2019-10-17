@@ -5,13 +5,15 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "GuyFabric", "GuyFabric.sfproj", "{B6687F71-FFCA-400F-B3C6-CDC32B71C024}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuyStatelessWebCore", "..\GuyStatelessWebCore\GuyStatelessWebCore.csproj", "{17368093-AB65-496A-A8B1-B3419C1D16E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuyStatelessWebCore", "..\GuyStatelessWebCore\GuyStatelessWebCore.csproj", "{17368093-AB65-496A-A8B1-B3419C1D16E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuyStatefulServiceCore", "GuyStatefulServiceCore\GuyStatefulServiceCore.csproj", "{14306647-FB7A-4B46-8FF8-C184488D4AF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuyStatefulServiceCore", "GuyStatefulServiceCore\GuyStatefulServiceCore.csproj", "{14306647-FB7A-4B46-8FF8-C184488D4AF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuyActorCore", "GuyActorCore\GuyActorCore.csproj", "{065D5900-195B-4EA1-96FF-1BED184F2908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuyActorCore", "GuyActorCore\GuyActorCore.csproj", "{065D5900-195B-4EA1-96FF-1BED184F2908}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuyActorCore.Interfaces", "GuyActorCore.Interfaces\GuyActorCore.Interfaces.csproj", "{A584B04A-19C3-401D-9515-D52AD03E9DBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuyActorCore.Interfaces", "GuyActorCore.Interfaces\GuyActorCore.Interfaces.csproj", "{A584B04A-19C3-401D-9515-D52AD03E9DBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuyRemoteServices", "..\GuyRemoteServices\GuyRemoteServices.csproj", "{61084A17-144A-44B9-8726-157B96C7616F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,14 @@ Global
 		{A584B04A-19C3-401D-9515-D52AD03E9DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A584B04A-19C3-401D-9515-D52AD03E9DBB}.Release|x64.ActiveCfg = Release|Any CPU
 		{A584B04A-19C3-401D-9515-D52AD03E9DBB}.Release|x64.Build.0 = Release|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Debug|x64.Build.0 = Debug|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Release|x64.ActiveCfg = Release|Any CPU
+		{61084A17-144A-44B9-8726-157B96C7616F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ My goal is to set up a stateful service that just invokes "Ticks" on "GuyActors"
 
 I want as many "guys" doing things as fast as possible; then I want to see how the system scales and what the cost is for such a thing. This information will be used to determine the feasibility of some other experiments I'd like to perform.
 
-## NitPicks
+## Progress Notes
 - Cant use 'async streams' in my ASPNetCore GuyWeb because is a C# 8 feature, and because the compiler is selected based on the framework version being used, I can't force it. However, I can't use the newer framework versions because they don't compile without errors (right out of the box). I might have to debug the error of something that should "just work". Alternatively, I can do it another way where I do not need the async streams (I think ChannelReader?). Information from https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version. **Elected Solution:** Added a new GuyWebCore project. I am going to use the .Net Core 3 version that was released just last month. Lets see how it goes. (Updates) It causes a lot of problems. **Final Solution:** It just seems that the templates that Visual Studio creates projects with are out of data, and so from the template a bunch of amendments need to be made to have a cleaner experience. After cleaning up the problems things started to fall in to place.
 
 - I switched to .Net Core 3 for GuyWebCore. There are two issues here now. Mapping the Index URL to http://{MachineName}:{Port}/, and deploying to {Port} in a consistent manner so that I can launch with Ctrl-F5. Arguably the second is less important...If you're not a developer. I am, and so it is maybe most important. I found this: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-tutorial-dotnet-app-enable-https-endpoint which applies to httpS(!) instead of http, however I am hoping it is applicable. Note: Https may be more desirable but I do not want to mess with the issue of certificates right now. Adding the Kestrel listener to listen to the endpoint from the ServiceManifest seems to have taken me a little further, but the actual file contents are not posting (though the URLs aren't failing out now either.). I found this: https://andrewlock.net/comparing-startup-between-the-asp-net-core-3-templates/; within it there are links to changes in ASP.Net Core 3 vs ASP.Net Core 2.2. It seems to talk about the differences between UseMVC and the Endpoint routing (things I know nothing about).
@@ -21,6 +21,9 @@ https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-work-with-r
 - In preparation for Actor work - review https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction
 
 - I think I got the jist of how the SignalR Hubs work (and they do seem to work well, and 'as expected'). Streaming is still an open question. Ideally I have a stream that is constant, however all of the streams I see at the moment seem to have a finite number of elements being transferred. I'll have to do further research on this.
+
+
+- Next is testing of service remoting. https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-remoting; this is wired up but I think that there is a mismatch between adding listeners via the servicemanifest and via code in the CreateServiceReplicaListeners(). In the meantime, however, I have it to the point where a SignalR Hub can RPC on the stateful service core. 
 
 ## At the moment I have the following components:
 ### GuyStatefulServiceCore

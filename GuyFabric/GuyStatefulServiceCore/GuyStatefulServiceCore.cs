@@ -4,20 +4,40 @@ using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GuyRemoteServices;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime;
 
 namespace GuyStatefulServiceCore
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class GuyStatefulServiceCore : StatefulService
+    internal sealed class GuyStatefulServiceCore : StatefulService, IGuyStatefulServiceCoreInterface
     {
+        const string GUY_DICTIONARY = "guy_dictionary";
         public GuyStatefulServiceCore(StatefulServiceContext context)
             : base(context)
-        { }
+        { 
+        }
+
+        public async Task CreateGuy()
+        {
+            await Task.Delay(1);
+            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>(GUY_DICTIONARY);
+            // TODO create a new guy state and add it to the dictionary.
+        }
+
+        public async Task<string> GetGuys()
+        {
+            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>(GUY_DICTIONARY);
+            // TODO - return a json serialized collection of guy states
+            await Task.Delay(1);
+            return "TODO: Return Guys collection from GuyStatefulServiceCore.";
+        }
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -28,7 +48,13 @@ namespace GuyStatefulServiceCore
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceReplicaListener[0];
+            return new []
+            {
+                new ServiceReplicaListener(context => new FabricTransportServiceRemotingListener(context, this), name: "ServiceEndpointV2")
+            };
+            //return new[] { new ServiceInstanceListener(context => new FabricTransportServiceRemotingListener(context, this)) };
+            //return this.CreateServiceRemotingReplicaListeners();
+            //return new ServiceReplicaListener[0];
         }
 
         /// <summary>
@@ -41,8 +67,9 @@ namespace GuyStatefulServiceCore
             // TODO: Replace the following sample code with your own logic 
             //       or remove this RunAsync override if it's not needed in your service.
 
-            var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
-
+            // todo: Make the GUY_DICTIONARY a <string, string> dictionary.
+            var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>(GUY_DICTIONARY);
+            
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();

@@ -46,8 +46,9 @@ namespace GuyStatelessWebCore
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
-                    }))
+                    }))            
             };
+
         }
     }
 }

@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GuyRemoteServices;
 using GuyStatelessWebCore.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace GuyStatelessWebCore
 {
@@ -30,6 +33,7 @@ namespace GuyStatelessWebCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+  
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
