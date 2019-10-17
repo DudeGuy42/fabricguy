@@ -22,8 +22,11 @@ https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-work-with-r
 
 - I think I got the jist of how the SignalR Hubs work (and they do seem to work well, and 'as expected'). Streaming is still an open question. Ideally I have a stream that is constant, however all of the streams I see at the moment seem to have a finite number of elements being transferred. I'll have to do further research on this.
 
-
 - Next is testing of service remoting. https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-remoting; this is wired up but I think that there is a mismatch between adding listeners via the servicemanifest and via code in the CreateServiceReplicaListeners(). In the meantime, however, I have it to the point where a SignalR Hub can RPC on the stateful service core. 
+
+- The next goal is to get "Guys" being created in the back-end service. I want it to be a bit excessive, like every new connection that comes in results in the creation of a "guy". I also need a new exercise to build in to this to test out the various reliable collections. The Reliable Concurrent Queue sounds fun (geared for high throughput). I forgot to come to a decision on the optimal way to return data to the client about the "guys". I think for now I will be a bit brute force about it.
+
+- Are reliable collections accessible across the fabric? I.e. if an Actor tries to use ConcurrentDictionary "GUY_DICTIONARY", is it the same one as in the GuyStatefulServiceCore? I need to take a step back and think about how to best store access these elements now that I know how they communicate. According to a brief google search, a GuyActor won't necessarily be able to access a reliable dictionary that is kept within GuyStatefulServiceCore. 
 
 ## At the moment I have the following components:
 ### GuyStatefulServiceCore

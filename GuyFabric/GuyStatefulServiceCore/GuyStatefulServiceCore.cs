@@ -24,11 +24,19 @@ namespace GuyStatefulServiceCore
         { 
         }
 
-        public async Task CreateGuy()
+        public async Task CreateGuy(string name)
         {
-            await Task.Delay(1);
-            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>(GUY_DICTIONARY);
-            // TODO create a new guy state and add it to the dictionary.
+            // architecture decision - create a reliable concurrent queue to pull generic events from in the main loop
+            // or is an 'on demand rpc' okay?
+
+            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, string>>(GUY_DICTIONARY);
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                // TODO create a new guy state and add it to the dictionary.
+                await guyDictionary.AddAsync(tx, name, "{ }");
+                
+                await tx.CommitAsync();
+            }
         }
 
         public async Task<string> GetGuys()

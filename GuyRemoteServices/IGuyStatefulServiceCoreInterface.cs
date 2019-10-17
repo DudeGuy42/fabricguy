@@ -9,7 +9,7 @@ namespace GuyRemoteServices
 {
     public interface IGuyStatefulServiceCoreInterface : IService 
     {
-        Task CreateGuy();
+        Task CreateGuy(string name);
         Task<string> GetGuys();
     }
 }

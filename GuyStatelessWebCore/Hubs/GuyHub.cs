@@ -21,8 +21,8 @@ namespace GuyStatelessWebCore.Hubs
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
+            await _guyService.CreateGuy(Context.ConnectionId);
             await Clients.All.SendAsync("connected", $"new connection: {this.Context.ConnectionId}");
-         //   await _guyService.CreateGuy();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
