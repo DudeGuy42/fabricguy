@@ -28,6 +28,16 @@ https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-work-with-r
 
 - Are reliable collections accessible across the fabric? I.e. if an Actor tries to use ConcurrentDictionary "GUY_DICTIONARY", is it the same one as in the GuyStatefulServiceCore? I need to take a step back and think about how to best store access these elements now that I know how they communicate. According to a brief google search, a GuyActor won't necessarily be able to access a reliable dictionary that is kept within GuyStatefulServiceCore. 
 
+- on "another thread" I created a React front-end for this demo: http://www.github.com/DudeGuy42/reactive-guy, I will eventually merge it in (it could use some clean-up as well; I'm okay with this for a day 1 style)
+
+- My main problem for the moment is how to best distribute the compute work. Thankfully, for the sake of this demo, the "Compute work" is little more than just incrementing what is essentially a counter value. My goal is to support a *ton* of concurrent connections all sharing the same state. The more I can support, then the more proud I will be. Ideally, all of these concurrent connections move in lockstep as well. Apparently it's a tall order to fit a lot of users on a single hub. The suggested move for inter-partition/server communication is to use a Redis cache. I'll think about incorporating a redis cache.
+From a "gameplay" perspective, there is this notion of having different timesteps for different "levels" of interaction. For example, "real-time" parts of the game can have much faster time steps and cooperate on a much closer level, but then they "resolve" in to a result that is only a single part of a much larger timestep on a "world" or "global" level. Think "Shattered Galaxy" kind of status. On a large level the global map doesn't necessarily need everyone to be in lock-step (it's not a big deal if a player is a second or two behind). When the player's join in to a game on a closer level, however, then it becomes important for them to have that sub 500 ms latency.
+
+- For the moment I am using random actor ids via the hub. Ideally there is some sort of deterministic naming scheme. 
+
+- When I resume: Add an endpoint to the user client to manage error messages.
+
+
 ## At the moment I have the following components:
 ### GuyStatefulServiceCore
 The main service that pumps the GuyActors for events.

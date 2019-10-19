@@ -1,5 +1,8 @@
-﻿using GuyRemoteServices;
+﻿using GuyActorCore.Interfaces;
+using GuyRemoteServices;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.ServiceFabric.Actors;
+using Microsoft.ServiceFabric.Actors.Client;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using System;
@@ -13,15 +16,18 @@ namespace GuyStatelessWebCore.Hubs
 {
     public class GuyHub: Hub
     {
-        IGuyStatefulServiceCoreInterface _guyService;
+        IGuyStatefulServiceCoreInterface _mainServiceProxy;
+        Dictionary<string, string> _connectionGuyDictionary = new Dictionary<string, string>();
+
         public GuyHub()
         { 
-            _guyService = ServiceProxy.Create<IGuyStatefulServiceCoreInterface>(new Uri("fabric:/GuyFabric/GuyStatefulServiceCore"), new ServicePartitionKey(1), listenerName: "ServiceEndpointV2");
+            _mainServiceProxy = ServiceProxy.Create<IGuyStatefulServiceCoreInterface>(new Uri("fabric:/GuyFabric/GuyStatefulServiceCore"), new ServicePartitionKey(1), listenerName: "ServiceEndpointV2");
         }
+
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            await _guyService.CreateGuy(Context.ConnectionId);
+            await _mainServiceProxy.CreateGuy(Context.ConnectionId);
             await Clients.All.SendAsync("connected", $"new connection: {this.Context.ConnectionId}");
         }
 
@@ -31,11 +37,29 @@ namespace GuyStatelessWebCore.Hubs
             await Clients.All.SendAsync("disconnected", $"{this.Context.ConnectionId} disconnected.");
         }
 
+        private IGuyActorCore Guy()
+        {
+            return ActorProxy.Create<IGuyActorCore>(new ActorId(_connectionGuyDictionary[this.Context.ConnectionId]), new Uri("fabric:/GuyFabric/GuyActorCore"));
+        }
+
+        public async Task<bool> LoginAs(string name)
+        {
+            return _connectionGuyDictionary.TryAdd(this.Context.ConnectionId, name);
+        }
+
+        public async Task LogoutAs(string name)
+        {
+            if(this._connectionGuyDictionary.ContainsKey(this.Context.ConnectionId))
+            {
+                _connectionGuyDictionary.Remove(this.Context.ConnectionId);
+            }
+        }
+
         public async Task HubInfo()
         {
             try
             {
-                var guys = await _guyService.GetGuys();
+                var guys = await _mainServiceProxy.GetGuys();
                 await Clients.Caller.SendAsync("receiveInfo", $"ConnectionId: {this.Context.ConnectionId}\nGuysData: {guys}");
             }
             catch(Exception ex)
@@ -43,6 +67,41 @@ namespace GuyStatelessWebCore.Hubs
                 await Clients.Caller.SendAsync("receiveInfo", $"Server Exception: {ex}");
 
                 Console.WriteLine($"{ex}");
+            }
+        }
+
+        /// <summary>
+        /// The client has requested that its actor Eat.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Eat()
+        {
+            try
+            {
+                await Guy().Eat();
+            }
+            catch(Exception ex)
+            {
+                // Dunno.
+                // Do something.
+            }
+        }
+
+        /// <summary>
+        /// The client has requested that its actor sleep.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Sleep()
+        {
+            try
+            {
+                await Guy().Sleep();
+            }
+            catch(Exception ex)
+            {
+                // Dunno. 
+                // Do something.
+
             }
         }
 
