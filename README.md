@@ -36,7 +36,7 @@ From a "gameplay" perspective, there is this notion of having different timestep
 - For the moment I am using random actor ids via the hub. Ideally there is some sort of deterministic naming scheme. 
 
 - When I resume: Add an endpoint to the user client to manage error messages.
-
+- In trying to use asynchronous enumerators on an IReliableDictionary, and failing again (compiler says the interface does not have the correct methods, even though they clearly do) I am just going to put this project on hiatus for the nth time. I'm convinced that it would probably be a very expensive service to run anyways. In the meantime, I am going to peruse other open-source alternatives for the larger project that I am working on.
 
 ## At the moment I have the following components:
 ### GuyStatefulServiceCore

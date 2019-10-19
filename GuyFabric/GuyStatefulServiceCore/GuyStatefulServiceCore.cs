@@ -10,6 +10,9 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime;
+using Microsoft.ServiceFabric.Actors.Client;
+using GuyActorCore.Interfaces;
+using Microsoft.ServiceFabric.Actors;
 
 namespace GuyStatefulServiceCore
 {
@@ -19,31 +22,43 @@ namespace GuyStatefulServiceCore
     internal sealed class GuyStatefulServiceCore : StatefulService, IGuyStatefulServiceCoreInterface
     {
         const string GUY_DICTIONARY = "guy_dictionary";
+        const string GUY_ACTOR_URI = "fabric:/GuyFabric/GuyActorCore";
+
+
         public GuyStatefulServiceCore(StatefulServiceContext context)
             : base(context)
         { 
         }
 
-        public async Task CreateGuy(string name)
+        public async Task SpawnGuy(string name)
         {
-            // architecture decision - create a reliable concurrent queue to pull generic events from in the main loop
-            // or is an 'on demand rpc' okay?
-
-            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, string>>(GUY_DICTIONARY);
+            // TODO: Will this work??
+            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, IGuyActorCore>>(GUY_DICTIONARY);
+            
             using (var tx = this.StateManager.CreateTransaction())
             {
-                // TODO create a new guy state and add it to the dictionary.
-                await guyDictionary.AddAsync(tx, name, "{ }");
+                // creates an actor proxy with the same name as the guy.
+                await guyDictionary.AddAsync(tx, name, ActorProxy.Create<IGuyActorCore>(new ActorId(name), new Uri(GUY_ACTOR_URI)));
                 
                 await tx.CommitAsync();
             }
         }
 
-        public async Task<string> GetGuys()
+        public async Task<string> RetrieveGuys()
         {
-            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>(GUY_DICTIONARY);
-            // TODO - return a json serialized collection of guy states
-            await Task.Delay(1);
+            var guyDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, IGuyActorCore>>(GUY_DICTIONARY);
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var collection = await guyDictionary.CreateEnumerableAsync(tx, EnumerationMode.Unordered);
+                
+                await foreach(var item in collection)
+                {
+                    
+                }
+            }
+
+                await Task.Delay(1);
+                // TODO - return a json serialized collection of guy states
             return "TODO: Return Guys collection from GuyStatefulServiceCore.";
         }
 

@@ -18,16 +18,16 @@ namespace GuyStatelessWebCore.Hubs
     {
         IGuyStatefulServiceCoreInterface _mainServiceProxy;
         Dictionary<string, string> _connectionGuyDictionary = new Dictionary<string, string>();
-
+        const string MAIN_SERVICE_URI = "fabric:/GuyFabric/GuyStatefulServiceCore";
         public GuyHub()
         { 
-            _mainServiceProxy = ServiceProxy.Create<IGuyStatefulServiceCoreInterface>(new Uri("fabric:/GuyFabric/GuyStatefulServiceCore"), new ServicePartitionKey(1), listenerName: "ServiceEndpointV2");
+            _mainServiceProxy = ServiceProxy.Create<IGuyStatefulServiceCoreInterface>(new Uri(MAIN_SERVICE_URI), new ServicePartitionKey(1), listenerName: "ServiceEndpointV2");
         }
 
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            await _mainServiceProxy.CreateGuy(Context.ConnectionId);
+            await _mainServiceProxy.SpawnGuy(Context.ConnectionId);
             await Clients.All.SendAsync("connected", $"new connection: {this.Context.ConnectionId}");
         }
 
@@ -59,7 +59,7 @@ namespace GuyStatelessWebCore.Hubs
         {
             try
             {
-                var guys = await _mainServiceProxy.GetGuys();
+                var guys = await _mainServiceProxy.RetrieveGuys();
                 await Clients.Caller.SendAsync("receiveInfo", $"ConnectionId: {this.Context.ConnectionId}\nGuysData: {guys}");
             }
             catch(Exception ex)
